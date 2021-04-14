@@ -1,0 +1,23 @@
+#Import library yang dibutuhkan
+import pandas as pd
+import numpy as np
+import re
+
+#Membuat sampel dataframe
+data = {'telp': ['(021) 5010804','0000021-5043739', '0215080719', '000215067172','[0021]-5016969','-','Tidak terdapat No. Telp']}
+df = pd.DataFrame(data)
+
+#Hapus karakter non-numerik
+df['telp_new1']=df['telp'].str.replace('\D','')
+
+#Hapus 0 diawal 
+df['telp_new2']=df['telp_new1'].str.replace('^0+','')
+
+#Isikan NaN pada row yang memuat string kosong 
+df['telp_new2'] = np.where(df['telp_new2']=='',np.nan,df['telp_new2'])
+
+#Tambahkan 0 diawal untuk kolom yang memuat nomor telp (tidak berisi NaN)
+df['clean'] = np.where(df['telp_new2'].isnull(), df['telp_new2'],'0'+df['telp_new2'])
+
+#Drop row yang mengandung nilai NaN
+df = df.dropna()
